@@ -1,8 +1,9 @@
+# 
 import argparse
+# defaultdict is used for handling missing keys in dictionaries
 from collections import defaultdict
 from contextlib import contextmanager
 from typing import Text, Dict, List, Generator
-import math
 import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -10,6 +11,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# SHOULD IT BE HERE?
 inmemory_storage = defaultdict(list)
 
 
@@ -51,15 +53,14 @@ def conversationPersistence(
     Returns:
         Conversation from the conversation storage.
     """
-    old_conversation_events = inmemory_storage[conversation_id]
+    old_conversation_events = inmemory_storage[conversation_id][:]
     # if old_conversation_events is None:
     #     old_conversation_events = []
     conversation = Conversation(conversation_id, old_conversation_events)
-
-    inmemory_storage[conversation_id] += conversation.new_events_dict()
     
     yield conversation
 
+    inmemory_storage[conversation_id] += conversation.new_events_dict()
 
 
 class ChuckNorrisBot:
